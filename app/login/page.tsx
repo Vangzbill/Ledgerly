@@ -20,7 +20,10 @@ export default function Login() {
     const creds = { email: String(f.get("email")), password: String(f.get("password")) };
     setBusy(true);
     const auth = createClient().auth;
-    const { data, error } = mode === "in" ? await auth.signInWithPassword(creds) : await auth.signUp(creds);
+    const { data, error } = mode === "in" ? await auth.signInWithPassword(creds) : await auth.signUp({
+      ...creds,
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+    });
     setBusy(false);
     if (error) return toast.error(error.message);
     if (!data.session) return toast.success("Check your email to confirm your account.");
