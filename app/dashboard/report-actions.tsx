@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
-import { Download, Loader2, MessageCircle } from "lucide-react";
+import Link from "next/link";
+import { Download, Loader2, MessageCircle, Users } from "lucide-react";
 import { toast } from "sonner";
 import { exportToExcel, type ExportRow } from "@/lib/export-excel";
 import { formatIdr } from "@/lib/format";
 import { MONTHS_ID } from "@/lib/periods";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 interface ReportActionsProps {
   rows: ExportRow[];
@@ -42,6 +43,7 @@ export function ReportActions({ rows, month, year, monthTotal, monthIncome, topC
         {exporting ? <Loader2 className="animate-spin" /> : <Download />} Export to Excel
       </Button>
       <Button variant="outline" onClick={shareWhatsApp}><MessageCircle /> Share to WhatsApp</Button>
+      <Link href="/dashboard/split-bill" className={buttonVariants({ variant: "outline" })}><Users /> Split Bill</Link>
     </div>
   );
 }

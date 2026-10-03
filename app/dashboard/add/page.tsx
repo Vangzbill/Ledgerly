@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { Camera, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import { runOcr } from "@/actions/ocr";
+import { scanReceipt } from "@/lib/scan-receipt";
 import { parseReceipt, type ParsedReceipt } from "@/lib/parse-receipt";
 import { parseHistory } from "@/lib/parse-history";
 import { HistoryReview } from "./history-review";
@@ -13,7 +13,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const MAX_BYTES = 5 * 1024 * 1024;
 const empty = { merchant: "", amount: "", date: "", category: "", type: "expense" as "income" | "expense" };
 
 export default function AddReceipt() {
@@ -28,38 +27,15 @@ export default function AddReceipt() {
 
   async function handleFile(file?: File) {
     if (!file) return;
-    if (!file.type.startsWith("image/")) return toast.error("Please choose an image.");
-    if (file.size > MAX_BYTES) return toast.error("Image must be under 5 MB.");
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return router.push("/login");
-
-    setPreview(URL.createObjectURL(file));
-    setBusy("upload");
-    const path = `${user.id}/${crypto.randomUUID()}-${file.name.replace(/[^\w.-]/g, "_")}`;
-    const { error } = await supabase.storage.from("receipts").upload(path, file);
-    if (error) {
-      setBusy("");
-      return toast.error(error.message);
-    }
-    setReceiptPath(path);
-
-    setBusy("ocr");
-    let text: string | undefined;
-    try {
-      text = (await runOcr(path)).text;
-    } catch (err) {
-      console.error("[ocr] server action failed", err);
-    }
-    if (!text) {
-      try {
-        const { tesseractOcr } = await import("@/lib/tesseract-fallback");
-        text = await tesseractOcr(file);
-      } catch (err) {
-        console.error("[ocr] tesseract fallback failed", err);
-      }
-    }
+    if (file.type.startsWith("image/")) setPreview(URL.createObjectURL(file));
+    const scan = await scanReceipt(file, setBusy);
     setBusy("");
+    if ("error" in scan) {
+      if (scan.signedOut) return router.push("/login");
+      return toast.error(scan.error);
+    }
+    setReceiptPath(scan.path);
+    const text = scan.text;
     if (!text) return toast.error("Could not read the receipt — please fill it in manually.");
     setRawText(text);
     const history = parseHistory(text);

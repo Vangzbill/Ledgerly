@@ -8,6 +8,9 @@ export function currentPeriod(): { year: number; month: number } {
   return { year, month };
 }
 
+/** today as YYYY-MM-DD in the app's home timezone */
+export const todayJakarta = (): string => new Date().toLocaleDateString("en-CA", { timeZone: TIME_ZONE });
+
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /** [start, nextStart) date strings for a month, usable as gte/lt bounds on a `date` column */
