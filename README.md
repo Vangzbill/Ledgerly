@@ -49,13 +49,13 @@ Ledgerly turns the **photo you already have** into a record in about five second
 **Built for daily use**
 - ➕➖ Income / Expense, with auto-detection from wording like *received*, *diterima*, *gaji*
 - 🇮🇩 Everything displayed in **IDR** (`Rp 38.500`)
-- ✏️ Edit or delete any transaction inline, with a confirm step. The receipt photo is cleaned up too
+- ✏️ Edit or delete any transaction inline, with a confirm step
 - ⏳ Loading states everywhere: spinners, skeletons, disabled buttons
 - 📱 Mobile first: open the camera or pick from the gallery
 
 **Private by design**
 - 🔒 **Row-Level Security**: each user can only read and write their own rows
-- 🗄️ **Private storage bucket**: receipt photos are served only to their owner, and OCR sees a **60-second signed URL**
+- 🗄️ **Photos never pile up**: each upload goes to a private bucket, OCR reads it through a **60-second signed URL**, and the file is **deleted right after it has been read**
 - 🔑 The OCR API key never leaves the server
 
 ## How it works

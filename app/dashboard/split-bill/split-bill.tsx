@@ -17,10 +17,9 @@ import { initialSplitState, splitReducer } from "./state";
 
 interface SplitBillProps {
   receipt: ExtractedReceipt;
-  receiptPath: string;
 }
 
-export function SplitBill({ receipt, receiptPath }: SplitBillProps) {
+export function SplitBill({ receipt }: SplitBillProps) {
   const router = useRouter();
   const [state, dispatch] = useReducer(splitReducer, initialSplitState);
   const [name, setName] = useState("");
@@ -49,7 +48,6 @@ export function SplitBill({ receipt, receiptPath }: SplitBillProps) {
       date,
       category: "Food",
       type: "expense",
-      receipt_path: receiptPath || null,
     });
     setSavingFor(null);
     if (error) return toast.error(error.message);

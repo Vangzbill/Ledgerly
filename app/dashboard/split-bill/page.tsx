@@ -22,7 +22,7 @@ export default function SplitBillPage() {
   const [preview, setPreview] = useState("");
   const [drag, setDrag] = useState(false);
   const [receipt, setReceipt] = useState<ExtractedReceipt | null>(null);
-  const [receiptPath, setReceiptPath] = useState("");
+  const [scanCount, setScanCount] = useState(0); // remounts <SplitBill> so a new receipt starts with fresh state
 
   async function handleFile(file?: File) {
     if (!file) return;
@@ -49,7 +49,7 @@ export default function SplitBillPage() {
       const body = await res.json();
       if (!res.ok) throw new Error(body.error ?? "Gagal memproses struk");
       setReceipt(body);
-      setReceiptPath(scan.path);
+      setScanCount((n) => n + 1);
     } catch (err) {
       console.error("[split-bill] extraction failed", err);
       toast.error(err instanceof Error ? err.message : "Gagal memproses struk");
@@ -60,7 +60,6 @@ export default function SplitBillPage() {
 
   function reset() {
     setReceipt(null);
-    setReceiptPath("");
     setPreview("");
   }
 
@@ -77,7 +76,7 @@ export default function SplitBillPage() {
       </div>
 
       {receipt ? (
-        <SplitBill key={receiptPath} receipt={receipt} receiptPath={receiptPath} />
+        <SplitBill key={scanCount} receipt={receipt} />
       ) : (
         <div className="grid gap-2">
           <label

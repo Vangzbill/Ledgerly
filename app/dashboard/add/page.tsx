@@ -19,7 +19,6 @@ export default function AddReceipt() {
   const router = useRouter();
   const [busy, setBusy] = useState<"" | "upload" | "ocr" | "save">("");
   const [preview, setPreview] = useState("");
-  const [receiptPath, setReceiptPath] = useState("");
   const [form, setForm] = useState(empty);
   const [drag, setDrag] = useState(false);
   const [rawText, setRawText] = useState("");
@@ -34,7 +33,6 @@ export default function AddReceipt() {
       if (scan.signedOut) return router.push("/login");
       return toast.error(scan.error);
     }
-    setReceiptPath(scan.path);
     const text = scan.text;
     if (!text) return toast.error("Could not read the receipt — please fill it in manually.");
     setRawText(text);
@@ -49,7 +47,7 @@ export default function AddReceipt() {
   async function saveAll() {
     setBusy("save");
     const { error } = await createClient().from("transactions").insert(
-      entries.map((e) => ({ ...e, amount: Number(e.amount), category: e.category || null, receipt_path: receiptPath || null })),
+      entries.map((e) => ({ ...e, amount: Number(e.amount), category: e.category || null })),
     );
     setBusy("");
     if (error) return toast.error(error.message);
@@ -67,7 +65,6 @@ export default function AddReceipt() {
       date: form.date || null,
       category: form.category || null,
       type: form.type,
-      receipt_path: receiptPath || null,
     });
     setBusy("");
     if (error) return toast.error(error.message);

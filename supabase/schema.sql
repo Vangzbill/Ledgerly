@@ -7,7 +7,6 @@ create table transactions (
   date date,
   type text not null default 'expense' check (type in ('income', 'expense')),
   category text,
-  receipt_path text,
   created_at timestamptz default now()
 );
 alter table transactions enable row level security;

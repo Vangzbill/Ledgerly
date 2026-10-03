@@ -15,7 +15,6 @@ export interface Transaction {
   category: string | null;
   type: string | null;
   amount: number | string | null;
-  receipt_path?: string | null;
 }
 
 export function TransactionRow({ tx }: { tx: Transaction }) {
@@ -43,19 +42,7 @@ export function TransactionRow({ tx }: { tx: Transaction }) {
       }).eq("id", tx.id),
       "Transaction updated",
     );
-  const remove = () =>
-    run(async () => {
-      const supabase = createClient();
-      const res = await supabase.from("transactions").delete().eq("id", tx.id);
-      if (res.error || !tx.receipt_path) return res;
-      // a history screenshot is shared by several rows: only drop the file once nothing else points at it
-      const { count } = await supabase.from("transactions").select("id", { count: "exact", head: true }).eq("receipt_path", tx.receipt_path);
-      if (!count) {
-        const { error } = await supabase.storage.from("receipts").remove([tx.receipt_path]);
-        if (error) console.error("[receipt] file cleanup failed", error.message);
-      }
-      return res;
-    }, "Transaction deleted");
+  const remove = () => run(() => createClient().from("transactions").delete().eq("id", tx.id), "Transaction deleted");
 
   if (mode === "edit") {
     const set = (k: keyof typeof draft) => (e: React.ChangeEvent<HTMLInputElement>) => setDraft({ ...draft, [k]: e.target.value });
