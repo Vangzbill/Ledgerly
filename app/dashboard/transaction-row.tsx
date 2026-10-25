@@ -53,16 +53,16 @@ export function TransactionRow({ tx }: { tx: Transaction }) {
         <TableCell><Input aria-label="Category" value={draft.category ?? ""} onChange={set("category")} /></TableCell>
         <TableCell>
           <button type="button" onClick={() => setDraft({ ...draft, type: draft.type === "income" ? "expense" : "income" })}
-            className={`rounded-md px-2 py-1 text-xs font-medium text-white ${draft.type === "income" ? "bg-emerald-800" : "bg-rose-700"}`}>
+            className={`rounded-md px-2 py-1 text-xs font-medium ${draft.type === "income" ? "bg-primary text-primary-foreground" : "bg-rose-700 text-white"}`}>
             {draft.type === "income" ? "Income" : "Expense"}
           </button>
         </TableCell>
         <TableCell><Input aria-label="Amount" type="number" min="0" step="1" value={draft.amount} onChange={set("amount")} className="text-right" /></TableCell>
         <TableCell className="whitespace-nowrap text-right">
-          <button type="button" aria-label="Save" disabled={busy || !draft.merchant || !(Number(draft.amount) > 0)} onClick={save} className="p-1.5 text-emerald-800 disabled:opacity-40">
+          <button type="button" aria-label="Save" disabled={busy || !draft.merchant || !(Number(draft.amount) > 0)} onClick={save} className="p-1.5 text-primary disabled:opacity-40">
             {busy ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
           </button>
-          <button type="button" aria-label="Cancel" disabled={busy} onClick={() => { setDraft({ ...tx, amount: String(tx.amount ?? "") }); setMode("view"); }} className="p-1.5 text-stone-500"><X className="size-4" /></button>
+          <button type="button" aria-label="Cancel" disabled={busy} onClick={() => { setDraft({ ...tx, amount: String(tx.amount ?? "") }); setMode("view"); }} className="p-1.5 text-muted-foreground"><X className="size-4" /></button>
         </TableCell>
       </TableRow>
     );
@@ -71,20 +71,20 @@ export function TransactionRow({ tx }: { tx: Transaction }) {
   return (
     <TableRow>
       <TableCell>{tx.date}</TableCell><TableCell>{tx.merchant}</TableCell><TableCell>{tx.category}</TableCell>
-      <TableCell><span className={income ? "text-emerald-700" : "text-rose-700"}>{income ? "Income" : "Expense"}</span></TableCell>
-      <TableCell className={`text-right tabular-nums ${income ? "text-emerald-700" : ""}`}>{income ? "+" : "-"}{formatIdr(tx.amount)}</TableCell>
+      <TableCell><span className={income ? "text-primary" : "text-destructive"}>{income ? "Income" : "Expense"}</span></TableCell>
+      <TableCell className={`text-right tabular-nums ${income ? "text-primary" : ""}`}>{income ? "+" : "-"}{formatIdr(tx.amount)}</TableCell>
       <TableCell className="whitespace-nowrap text-right">
         {mode === "confirm" ? (
           <>
             <button type="button" disabled={busy} onClick={remove} className="rounded-md bg-rose-700 px-2 py-1 text-xs font-medium text-white">
               {busy ? <Loader2 className="size-3 animate-spin" /> : "Delete?"}
             </button>
-            <button type="button" aria-label="Cancel" disabled={busy} onClick={() => setMode("view")} className="p-1.5 text-stone-500"><X className="size-4" /></button>
+            <button type="button" aria-label="Cancel" disabled={busy} onClick={() => setMode("view")} className="p-1.5 text-muted-foreground"><X className="size-4" /></button>
           </>
         ) : (
           <>
-            <button type="button" aria-label="Edit" onClick={() => setMode("edit")} className="p-1.5 text-stone-500 hover:text-stone-900"><Pencil className="size-4" /></button>
-            <button type="button" aria-label="Delete" onClick={() => setMode("confirm")} className="p-1.5 text-stone-500 hover:text-rose-700"><Trash2 className="size-4" /></button>
+            <button type="button" aria-label="Edit" onClick={() => setMode("edit")} className="p-1.5 text-muted-foreground hover:text-foreground"><Pencil className="size-4" /></button>
+            <button type="button" aria-label="Delete" onClick={() => setMode("confirm")} className="p-1.5 text-muted-foreground hover:text-destructive"><Trash2 className="size-4" /></button>
           </>
         )}
       </TableCell>

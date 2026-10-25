@@ -82,16 +82,16 @@ export default function AddReceipt() {
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
         onDragLeave={() => setDrag(false)}
         onDrop={(e) => { e.preventDefault(); setDrag(false); handleFile(e.dataTransfer.files[0]); }}
-        className={`flex min-h-64 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-4 text-center transition ${drag ? "border-emerald-700 bg-emerald-50" : "border-stone-400 bg-white"}`}
+        className={`flex min-h-64 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-4 text-center transition ${drag ? "border-primary bg-primary/10" : "border-border bg-card"}`}
       >
         {preview ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={preview} alt="Receipt preview" className="max-h-72 rounded" />
         ) : (
-          <><Camera className="size-8 text-emerald-800" /><span className="font-serif text-xl">Choose from gallery or drop a receipt</span></>
+          <><Camera className="size-8 text-primary" /><span className="font-serif text-xl">Choose from gallery or drop a receipt</span></>
         )}
         {busy && busy !== "save" && (
-          <span className="flex items-center gap-2 text-sm text-stone-600">
+          <span className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="size-4 animate-spin" />{busy === "upload" ? "Uploading…" : "Reading receipt… (can take a few seconds)"}
           </span>
         )}
@@ -110,10 +110,10 @@ export default function AddReceipt() {
         <CardHeader><CardTitle className="font-serif text-xl">Review</CardTitle></CardHeader>
         <CardContent>
           <form onSubmit={save} className="grid gap-4">
-            <div className="grid grid-cols-2 gap-1 rounded-lg bg-stone-100 p-1" role="radiogroup" aria-label="Transaction type">
+            <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1" role="radiogroup" aria-label="Transaction type">
               {(["expense", "income"] as const).map((t) => (
                 <button key={t} type="button" role="radio" aria-checked={form.type === t} onClick={() => setForm({ ...form, type: t })}
-                  className={`rounded-md py-1.5 text-sm font-medium transition ${form.type === t ? (t === "income" ? "bg-emerald-800 text-white" : "bg-rose-700 text-white") : "text-stone-600"}`}>
+                  className={`rounded-md py-1.5 text-sm font-medium transition ${form.type === t ? (t === "income" ? "bg-primary text-primary-foreground" : "bg-rose-700 text-white") : "text-muted-foreground"}`}>
                   {t === "income" ? "Income" : "Expense"}
                 </button>
               ))}
@@ -122,15 +122,15 @@ export default function AddReceipt() {
             <div className="grid gap-2"><Label htmlFor="amount">Total (IDR)</Label><Input id="amount" type="number" step="1" min="0" value={form.amount} onChange={set("amount")} required /></div>
             <div className="grid gap-2"><Label htmlFor="date">Date</Label><Input id="date" type="date" value={form.date} onChange={set("date")} required /></div>
             <div className="grid gap-2"><Label htmlFor="category">Category</Label><Input id="category" value={form.category} onChange={set("category")} placeholder="Groceries" /></div>
-            <Button type="submit" disabled={busy !== ""} className="bg-emerald-800 hover:bg-emerald-900">{busy === "save" ? <><Loader2 className="animate-spin" /> Saving…</> : "Save Transaction"}</Button>
+            <Button type="submit" disabled={busy !== ""} className="bg-primary hover:bg-primary/90">{busy === "save" ? <><Loader2 className="animate-spin" /> Saving…</> : "Save Transaction"}</Button>
           </form>
         </CardContent>
       </Card>
       )}
       {rawText && (
-        <details className="text-sm text-stone-600 md:col-span-2">
+        <details className="text-sm text-muted-foreground md:col-span-2">
           <summary className="cursor-pointer">Show scanned text</summary>
-          <pre className="mt-2 overflow-x-auto whitespace-pre-wrap rounded-lg bg-white p-3 text-xs">{rawText}</pre>
+          <pre className="mt-2 overflow-x-auto whitespace-pre-wrap rounded-lg bg-card p-3 text-xs">{rawText}</pre>
         </details>
       )}
     </section>

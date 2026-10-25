@@ -38,20 +38,20 @@ export function ItemAssigner({ receipt, index, people, assignments, dispatch }: 
   }
 
   return (
-    <li className="rounded-lg border border-stone-300 bg-white p-3">
+    <li className="rounded-lg border border-border bg-card p-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <p className="font-medium">{item.qty}× {item.name}</p>
-        <p className="tabular-nums text-sm text-stone-600">
-          {formatIdr(item.total_price)}{item.qty > 1 && <span className="text-stone-400"> ({formatIdr(item.total_price / item.qty)} / porsi)</span>}
+        <p className="tabular-nums text-sm text-muted-foreground">
+          {formatIdr(item.total_price)}{item.qty > 1 && <span className="text-muted-foreground/70"> ({formatIdr(item.total_price / item.qty)} / porsi)</span>}
         </p>
       </div>
 
       {people.length === 0 ? (
-        <p className="mt-2 text-sm text-stone-500">Tambahkan orang dulu untuk membagi menu ini.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Tambahkan orang dulu untuk membagi menu ini.</p>
       ) : item.qty === 1 ? (
         <div className="mt-2">
           <Select items={singleItems} value={singleValue} onValueChange={onSinglePick}>
-            <SelectTrigger aria-label={`Siapa yang makan ${item.name}`} className="w-full bg-white sm:w-64"><SelectValue /></SelectTrigger>
+            <SelectTrigger aria-label={`Siapa yang makan ${item.name}`} className="w-full bg-card sm:w-64"><SelectValue /></SelectTrigger>
             <SelectContent>{singleItems.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
           </Select>
         </div>
@@ -62,7 +62,7 @@ export function ItemAssigner({ receipt, index, people, assignments, dispatch }: 
               const units = mine[p.id] ?? 0;
               const max = units + left;
               return (
-                <li key={p.id} className="flex items-center gap-1 rounded-full border border-stone-300 py-1 pl-3 pr-1 text-sm">
+                <li key={p.id} className="flex items-center gap-1 rounded-full border border-border py-1 pl-3 pr-1 text-sm">
                   <span>{p.name}</span>
                   <Button type="button" variant="ghost" size="icon-xs" aria-label={`Kurangi ${p.name}`} disabled={units <= 0}
                     onClick={() => dispatch({ type: "setUnits", item: index, person: p.id, units: units - 1, max })}><Minus /></Button>
@@ -77,14 +77,14 @@ export function ItemAssigner({ receipt, index, people, assignments, dispatch }: 
             <Button type="button" variant="outline" size="sm" disabled={people.length < 2} onClick={() => dispatch({ type: "splitEvenly", item: index, qty: item.qty })}>
               <Users /> Bagi rata
             </Button>
-            <span className={left < 0.005 ? "text-emerald-700" : "text-amber-700"}>
+            <span className={left < 0.005 ? "text-primary" : "text-amber-700 dark:text-amber-400"}>
               {left < 0.005 ? "Semua porsi sudah dibagi" : `Sisa ${roundUnits(left)} dari ${item.qty} porsi`}
             </span>
           </div>
         </div>
       )}
       {people.length > 0 && item.qty === 1 && unitsAssigned(assignments, index) < 0.005 && (
-        <p className="mt-1 text-xs text-amber-700">Belum ada yang dipilih</p>
+        <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">Belum ada yang dipilih</p>
       )}
     </li>
   );

@@ -42,8 +42,8 @@ export default function Login() {
           <form onSubmit={submit} className="grid gap-4">
             <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" name="email" type="email" required autoComplete="email" /></div>
             <div className="grid gap-2"><Label htmlFor="password">Password</Label><Input id="password" name="password" type="password" minLength={6} required autoComplete={mode === "in" ? "current-password" : "new-password"} /></div>
-            <Button type="submit" disabled={busy} className="bg-emerald-800 hover:bg-emerald-900">{busy ? <><Loader2 className="animate-spin" /> Please wait…</> : mode === "in" ? "Sign in" : "Sign up"}</Button>
-            <button type="button" className="text-sm text-stone-600 underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
+            <Button type="submit" disabled={busy} className="bg-primary hover:bg-primary/90">{busy ? <><Loader2 className="animate-spin" /> Please wait…</> : mode === "in" ? "Sign in" : "Sign up"}</Button>
+            <button type="button" className="text-sm text-muted-foreground underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
               {mode === "in" ? "No account? Sign up" : "Have an account? Sign in"}
             </button>
           </form>

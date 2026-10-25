@@ -54,25 +54,25 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-sm font-normal uppercase tracking-widest text-stone-500">Top Category</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-sm font-normal uppercase tracking-widest text-muted-foreground">Top Category</CardTitle></CardHeader>
           <CardContent>
             <p className="font-serif text-3xl">{topCategory}</p>
-            {topAmount > 0 && <p className="text-sm text-stone-500">{formatIdr(topAmount)}</p>}
+            {topAmount > 0 && <p className="text-sm text-muted-foreground">{formatIdr(topAmount)}</p>}
           </CardContent>
         </Card>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-lg border border-stone-300 bg-white">
+      <div className="mt-4 overflow-x-auto rounded-lg border border-border bg-card">
         <Table>
           <TableHeader><TableRow><TableHead>Date</TableHead><TableHead>Merchant</TableHead><TableHead>Category</TableHead><TableHead>Type</TableHead><TableHead className="text-right">Amount</TableHead><TableHead className="w-24"><span className="sr-only">Actions</span></TableHead></TableRow></TableHeader>
           <TableBody>
-            {rows.length === 0 && <TableRow><TableCell colSpan={6} className="py-10 text-center text-stone-500">Tidak ada transaksi di bulan ini</TableCell></TableRow>}
+            {rows.length === 0 && <TableRow><TableCell colSpan={6} className="py-10 text-center text-muted-foreground">Tidak ada transaksi di bulan ini</TableCell></TableRow>}
             {rows.map((r) => <TransactionRow key={r.id} tx={r} />)}
           </TableBody>
         </Table>
       </div>
 
-      <Link href="/dashboard/add" aria-label="Add receipt" className={buttonVariants({ size: "lg" }) + " fixed bottom-6 right-6 h-14 rounded-full bg-emerald-800 px-5 shadow-lg hover:bg-emerald-900"}>
+      <Link href="/dashboard/add" aria-label="Add receipt" className={buttonVariants({ size: "lg" }) + " fixed bottom-6 right-6 h-14 rounded-full bg-primary px-5 shadow-lg hover:bg-primary/90"}>
         <Plus /> Add receipt
       </Link>
     </section>

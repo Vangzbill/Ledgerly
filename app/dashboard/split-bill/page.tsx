@@ -70,7 +70,7 @@ export default function SplitBillPage() {
       <div className="mb-6 flex items-center justify-between gap-2">
         <div>
           <h1 className="font-serif text-4xl">Split Bill</h1>
-          <p className="text-stone-600">Foto struk, pilih siapa makan apa, pajak dibagi proporsional.</p>
+          <p className="text-muted-foreground">Foto struk, pilih siapa makan apa, pajak dibagi proporsional.</p>
         </div>
         {receipt && <Button variant="outline" onClick={reset}><ArrowLeft /> Struk lain</Button>}
       </div>
@@ -83,16 +83,16 @@ export default function SplitBillPage() {
             onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
             onDragLeave={() => setDrag(false)}
             onDrop={(e) => { e.preventDefault(); setDrag(false); handleFile(e.dataTransfer.files[0]); }}
-            className={`flex min-h-64 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-4 text-center transition ${drag ? "border-emerald-700 bg-emerald-50" : "border-stone-400 bg-white"}`}
+            className={`flex min-h-64 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-4 text-center transition ${drag ? "border-primary bg-primary/10" : "border-border bg-card"}`}
           >
             {preview ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={preview} alt="Pratinjau struk" className="max-h-72 rounded" />
             ) : (
-              <><Camera className="size-8 text-emerald-800" /><span className="font-serif text-xl">Pilih dari galeri atau tarik struk ke sini</span></>
+              <><Camera className="size-8 text-primary" /><span className="font-serif text-xl">Pilih dari galeri atau tarik struk ke sini</span></>
             )}
             {busy && (
-              <span className="flex items-center gap-2 text-sm text-stone-600" role="status">
+              <span className="flex items-center gap-2 text-sm text-muted-foreground" role="status">
                 <Loader2 className="size-4 animate-spin" />{STAGE_LABEL[stage as Exclude<Stage, "idle">]}
               </span>
             )}

@@ -22,14 +22,14 @@ export function DashboardFilters({ month, year, years }: DashboardFiltersProps) 
   return (
     <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter periode">
       <Select items={monthItems} value={String(month)} onValueChange={(v) => v && go(Number(v), year)} disabled={pending}>
-        <SelectTrigger aria-label="Bulan" className="w-40 bg-white"><SelectValue /></SelectTrigger>
+        <SelectTrigger aria-label="Bulan" className="w-40 bg-card"><SelectValue /></SelectTrigger>
         <SelectContent>{monthItems.map((m) => <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>)}</SelectContent>
       </Select>
       <Select items={yearItems} value={String(year)} onValueChange={(v) => v && go(month, Number(v))} disabled={pending}>
-        <SelectTrigger aria-label="Tahun" className="w-28 bg-white"><SelectValue /></SelectTrigger>
+        <SelectTrigger aria-label="Tahun" className="w-28 bg-card"><SelectValue /></SelectTrigger>
         <SelectContent>{yearItems.map((y) => <SelectItem key={y.value} value={y.value}>{y.label}</SelectItem>)}</SelectContent>
       </Select>
-      {pending && <Loader2 className="size-4 animate-spin text-stone-500" aria-label="Memuat" />}
+      {pending && <Loader2 className="size-4 animate-spin text-muted-foreground" aria-label="Memuat" />}
     </div>
   );
 }
