@@ -116,6 +116,7 @@ app/                  routes: landing, login, dashboard, add receipt
 actions/              server actions (OCR, sign out)
 lib/parse-receipt.ts  receipt parser + total cross-check (self-test: npx tsx lib/parse-receipt.ts)
 lib/parse-history.ts  multi-entry parser for transaction-history screenshots
+lib/duplicates.ts     duplicate check against saved transactions (self-test: npx tsx lib/duplicates.ts)
 supabase/schema.sql   table, RLS and storage policies
 proxy.ts              protects /dashboard
 ```
@@ -125,11 +126,11 @@ proxy.ts              protects /dashboard
 - The parser is heuristic. Always glance at the review form before saving. Blurry, dark or skewed photos can still be misread, and *Show scanned text* helps you see why.
 - Dates like `03/04/2026` are read as day/month (Indonesian format).
 - OCR.space's free tier has a daily request limit. Photos are sent to that service for scanning. Tesseract runs fully in the browser if you prefer nothing leaves your device.
-- There is no duplicate detection yet: uploading overlapping history screenshots can create the same entry twice.
+- Duplicates (same merchant, amount and date as a saved transaction) are flagged, not blocked: history rows get an *Already saved* badge with a one-click *Skip duplicates*, and a single save asks for confirmation. Two identical coffees on the same day are still allowed.
 
 ## Roadmap
 
-- [ ] Duplicate detection (same merchant, amount and date)
+- [x] Duplicate detection (same merchant, amount and date)
 - [ ] Category picker and per-category charts
 - [ ] LLM-based extraction for unusual receipts
 - [ ] Per-user daily scan limit

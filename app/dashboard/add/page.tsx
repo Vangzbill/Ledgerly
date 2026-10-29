@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { scanReceipt } from "@/lib/scan-receipt";
 import { parseReceipt, type ParsedReceipt } from "@/lib/parse-receipt";
 import { parseHistory } from "@/lib/parse-history";
+import { existingKeys } from "@/lib/duplicates";
 import { HistoryReview } from "./history-review";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +24,7 @@ export default function AddReceipt() {
   const [drag, setDrag] = useState(false);
   const [rawText, setRawText] = useState("");
   const [entries, setEntries] = useState<ParsedReceipt[]>([]);
+  const [saved, setSaved] = useState<Set<string>>(new Set());
 
   async function handleFile(file?: File) {
     if (!file) return;
@@ -38,7 +40,10 @@ export default function AddReceipt() {
     setRawText(text);
     const history = parseHistory(text);
     setEntries(history);
-    if (history.length) return toast.success(`Found ${history.length} transactions. Please review.`);
+    if (history.length) {
+      toast.success(`Found ${history.length} transactions. Please review.`);
+      return existingKeys(history).then(setSaved, () => toast.warning("Couldn't check for duplicates."));
+    }
     const parsed = parseReceipt(text);
     setForm((f) => ({ ...f, ...parsed }));
     toast.success("Receipt scanned. Please review.");
@@ -59,6 +64,9 @@ export default function AddReceipt() {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     setBusy("save");
+    // ponytail: a failed check shouldn't block saving, worst case is the old behaviour
+    const dupes = await existingKeys([form]).catch(() => new Set<string>());
+    if (dupes.size && !confirm("A transaction with the same merchant, amount and date is already saved. Save anyway?")) return setBusy("");
     const { error } = await createClient().from("transactions").insert({
       merchant: form.merchant,
       amount: Number(form.amount),
@@ -104,7 +112,7 @@ export default function AddReceipt() {
       </div>
 
       {entries.length ? (
-        <div className="md:col-span-2"><HistoryReview entries={entries} saving={busy === "save"} onChange={setEntries} onSave={saveAll} /></div>
+        <div className="md:col-span-2"><HistoryReview entries={entries} saved={saved} saving={busy === "save"} onChange={setEntries} onSave={saveAll} /></div>
       ) : (
       <Card>
         <CardHeader><CardTitle className="font-serif text-xl">Review</CardTitle></CardHeader>
