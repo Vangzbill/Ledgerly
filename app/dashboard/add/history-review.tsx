@@ -31,12 +31,13 @@ export function HistoryReview({ entries, saved, saving, onChange, onSave }: Hist
       )}
       <ul className="grid gap-3">
         {entries.map((e, i) => (
-          <li key={i} className="grid grid-cols-[1fr_auto] gap-2 border-t border-border pt-3 sm:grid-cols-[2fr_1fr_1fr_auto_auto]">
+          <li key={i} className="grid grid-cols-[1fr_auto] gap-2 border-t border-border pt-3 sm:grid-cols-[2fr_1fr_1fr_1fr_auto_auto]">
             <div className="grid gap-1">
               <Input aria-label="Merchant" value={e.merchant} onChange={(ev) => update(i, { merchant: ev.target.value })} />
               {isDupe(e) && <span className="text-xs text-amber-700 dark:text-amber-400">Already saved</span>}
             </div>
             <Input aria-label="Amount" type="number" min="0" step="1" value={e.amount} onChange={(ev) => update(i, { amount: ev.target.value })} />
+            <Input aria-label="Category" list="categories" placeholder="Category" value={e.category} onChange={(ev) => update(i, { category: ev.target.value })} />
             <Input aria-label="Date" type="date" value={e.date} onChange={(ev) => update(i, { date: ev.target.value })} />
             <button
               type="button"

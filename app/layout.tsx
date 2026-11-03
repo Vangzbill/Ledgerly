@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/actions/auth";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { CATEGORIES } from "@/lib/categories";
 import "./globals.css";
 
 const THEME_SCRIPT = `try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`;
@@ -48,6 +49,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </nav>
         </header>
         <main className="flex-1">{children}</main>
+        {/* shared by every category input via list="categories" */}
+        <datalist id="categories">{CATEGORIES.map((c) => <option key={c} value={c} />)}</datalist>
         <Toaster richColors position="top-center" />
       </body>
     </html>

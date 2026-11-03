@@ -129,7 +129,7 @@ export default function AddReceipt() {
             <div className="grid gap-2"><Label htmlFor="merchant">Merchant</Label><Input id="merchant" value={form.merchant} onChange={set("merchant")} required /></div>
             <div className="grid gap-2"><Label htmlFor="amount">Total (IDR)</Label><Input id="amount" type="number" step="1" min="0" value={form.amount} onChange={set("amount")} required /></div>
             <div className="grid gap-2"><Label htmlFor="date">Date</Label><Input id="date" type="date" value={form.date} onChange={set("date")} required /></div>
-            <div className="grid gap-2"><Label htmlFor="category">Category</Label><Input id="category" value={form.category} onChange={set("category")} placeholder="Groceries" /></div>
+            <div className="grid gap-2"><Label htmlFor="category">Category</Label><Input id="category" list="categories" value={form.category} onChange={set("category")} placeholder="Pick or type a category" /></div>
             <Button type="submit" disabled={busy !== ""} className="bg-primary hover:bg-primary/90">{busy === "save" ? <><Loader2 className="animate-spin" /> Saving…</> : "Save Transaction"}</Button>
           </form>
         </CardContent>

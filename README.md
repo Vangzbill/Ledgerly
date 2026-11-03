@@ -131,7 +131,7 @@ proxy.ts              protects /dashboard
 ## Roadmap
 
 - [x] Duplicate detection (same merchant, amount and date)
-- [ ] Category picker and per-category charts
+- [x] Category picker and per-category charts
 - [ ] LLM-based extraction for unusual receipts
 - [ ] Per-user daily scan limit
 

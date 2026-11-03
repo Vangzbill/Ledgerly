@@ -36,7 +36,8 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
     const category = r.category || "Uncategorized";
     byCategory.set(category, (byCategory.get(category) ?? 0) + Number(r.amount ?? 0));
   });
-  const [topCategory, topAmount] = [...byCategory].sort((a, b) => b[1] - a[1])[0] ?? ["n/a", 0];
+  const categories = [...byCategory].sort((a, b) => b[1] - a[1]);
+  const [topCategory, topAmount] = categories[0] ?? ["n/a", 0];
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-8">
@@ -61,6 +62,28 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
           </CardContent>
         </Card>
       </div>
+
+      {categories.length > 0 && (
+        <Card className="mt-4">
+          <CardHeader><CardTitle className="text-sm font-normal uppercase tracking-widest text-muted-foreground">Spending by Category</CardTitle></CardHeader>
+          <CardContent>
+            <ul className="grid gap-3">
+              {categories.map(([name, amount]) => {
+                const share = spent > 0 ? (amount / spent) * 100 : 0;
+                return (
+                  <li key={name} className="grid gap-1" title={`${name}: ${formatIdr(amount)} (${share.toFixed(1)}%)`}>
+                    <div className="flex justify-between gap-2 text-sm">
+                      <span>{name}</span>
+                      <span className="tabular-nums text-muted-foreground">{formatIdr(amount)} · {Math.round(share)}%</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-muted"><div className="h-full rounded-full bg-primary" style={{ width: `${share}%` }} /></div>
+                  </li>
+                );
+              })}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="mt-4 overflow-x-auto rounded-lg border border-border bg-card">
         <Table>

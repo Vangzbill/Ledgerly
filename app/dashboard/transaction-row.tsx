@@ -50,7 +50,7 @@ export function TransactionRow({ tx }: { tx: Transaction }) {
       <TableRow>
         <TableCell><Input aria-label="Date" type="date" value={draft.date ?? ""} onChange={set("date")} /></TableCell>
         <TableCell><Input aria-label="Merchant" value={draft.merchant ?? ""} onChange={set("merchant")} /></TableCell>
-        <TableCell><Input aria-label="Category" value={draft.category ?? ""} onChange={set("category")} /></TableCell>
+        <TableCell><Input aria-label="Category" list="categories" value={draft.category ?? ""} onChange={set("category")} /></TableCell>
         <TableCell>
           <button type="button" onClick={() => setDraft({ ...draft, type: draft.type === "income" ? "expense" : "income" })}
             className={`rounded-md px-2 py-1 text-xs font-medium ${draft.type === "income" ? "bg-primary text-primary-foreground" : "bg-rose-700 text-white"}`}>
