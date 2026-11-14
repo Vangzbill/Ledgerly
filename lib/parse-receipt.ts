@@ -162,6 +162,22 @@ export function parseReceipt(text: string): ParsedReceipt {
 
 export const guessCategory = (text: string): string => CATEGORIES.find(([re]) => re.test(text))?.[1] ?? "";
 
+// Worth an LLM call? Transfers/top-ups have no line items, so the receipt extractor can't help them.
+export const needsLlm = (text: string, p: ParsedReceipt): boolean =>
+  !p.merchant || !Number(p.amount) || (!["Transfer", "Top Up"].includes(p.category) && !isVerified(text));
+
+// LLM values win where present; the heuristic result fills the gaps.
+export function mergeLlm(p: ParsedReceipt, llm: { merchant?: string; date?: string; total?: number }): ParsedReceipt {
+  const merchant = llm.merchant?.trim() || p.merchant;
+  return {
+    ...p,
+    merchant,
+    amount: llm.total && llm.total > 0 ? String(llm.total) : p.amount,
+    date: /^\d{4}-\d{2}-\d{2}$/.test(llm.date ?? "") ? llm.date! : p.date,
+    category: p.category || guessCategory(merchant),
+  };
+}
+
 if (typeof process !== "undefined" && process.argv?.[1]?.endsWith("parse-receipt.ts")) {
   const check = (name: string, text: string, want: string) => {
     const r = parseReceipt(text);
@@ -184,5 +200,10 @@ if (typeof process !== "undefined" && process.argv?.[1]?.endsWith("parse-receipt
   check("misread-total", "Cafe Bee\nTanggal: 24-05-2023 16:45\nSubtotal 172,500\nPajak 18,975\nTotal 131.47\nTUNAI 200,000\nKembalian 8,525", "Cafe Bee|191475|2023-05-24|Food");
   if (!isVerified("Subtotal 172,500\nPajak 18,975\nTotal 191,475\nTUNAI 200,000\nKembalian 8,525")) throw new Error("verified");
   if (parseReceipt("Transfer received\nRp 500.000").type !== "income") throw new Error("income detection");
+  const base: ParsedReceipt = { merchant: "", amount: "", date: "2026-10-01", category: "", type: "expense" };
+  if (!needsLlm("garbled", base)) throw new Error("needsLlm: empty parse");
+  if (needsLlm("x", { ...base, merchant: "BCA", amount: "50000", category: "Transfer" })) throw new Error("needsLlm: transfer");
+  const m = mergeLlm(base, { merchant: "Kopi Kenangan", date: "bad", total: 25000 });
+  if (`${m.merchant}|${m.amount}|${m.date}|${m.category}` !== "Kopi Kenangan|25000|2026-10-01|Food") throw new Error(`mergeLlm: ${JSON.stringify(m)}`);
   console.log("parse-receipt ok");
 }

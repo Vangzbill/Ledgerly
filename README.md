@@ -63,12 +63,12 @@ Ledgerly turns the **photo you already have** into a record in about five second
 ```
  photo ──► private Supabase Storage ──► signed URL (60s) ──► OCR.space (3 engines)
                                                           └─► Tesseract.js (fallback, in browser)
-                                                                      │
+                                                                       
                   Postgres + RLS ◄── review & edit ◄── parser + arithmetic cross-check
 ```
 
 ## Tech stack
-
+ 
 | Layer | Choice |
 | :--- | :--- |
 | Framework | Next.js 16 (App Router, Server Actions, `proxy.ts`) |
@@ -132,7 +132,7 @@ proxy.ts              protects /dashboard
 
 - [x] Duplicate detection (same merchant, amount and date)
 - [x] Category picker and per-category charts
-- [ ] LLM-based extraction for unusual receipts
+- [x] LLM-based extraction for unusual receipts
 - [ ] Per-user daily scan limit
 
 ---

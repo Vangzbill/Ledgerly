@@ -5,7 +5,7 @@ import { Camera, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { scanReceipt } from "@/lib/scan-receipt";
-import { parseReceipt, type ParsedReceipt } from "@/lib/parse-receipt";
+import { mergeLlm, needsLlm, parseReceipt, type ParsedReceipt } from "@/lib/parse-receipt";
 import { parseHistory } from "@/lib/parse-history";
 import { existingKeys } from "@/lib/duplicates";
 import { HistoryReview } from "./history-review";
@@ -18,7 +18,7 @@ const empty = { merchant: "", amount: "", date: "", category: "", type: "expense
 
 export default function AddReceipt() {
   const router = useRouter();
-  const [busy, setBusy] = useState<"" | "upload" | "ocr" | "save">("");
+  const [busy, setBusy] = useState<"" | "upload" | "ocr" | "extract" | "save">("");
   const [preview, setPreview] = useState("");
   const [form, setForm] = useState(empty);
   const [drag, setDrag] = useState(false);
@@ -44,7 +44,20 @@ export default function AddReceipt() {
       toast.success(`Found ${history.length} transactions. Please review.`);
       return existingKeys(history).then(setSaved, () => toast.warning("Couldn't check for duplicates."));
     }
-    const parsed = parseReceipt(text);
+    let parsed = parseReceipt(text);
+    if (needsLlm(text, parsed)) {
+      setBusy("extract");
+      try {
+        const res = await fetch("/api/extract-receipt", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+        const body = await res.json();
+        if (!res.ok) throw new Error(body.error);
+        parsed = mergeLlm(parsed, body);
+      } catch (err) {
+        // the heuristic result is still usable, so don't block on this
+        console.error("[add] LLM extraction failed", err);
+      }
+      setBusy("");
+    }
     setForm((f) => ({ ...f, ...parsed }));
     toast.success("Receipt scanned. Please review.");
   }
@@ -100,7 +113,7 @@ export default function AddReceipt() {
         )}
         {busy && busy !== "save" && (
           <span className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="size-4 animate-spin" />{busy === "upload" ? "Uploading…" : "Reading receipt… (can take a few seconds)"}
+            <Loader2 className="size-4 animate-spin" />{busy === "upload" ? "Uploading…" : busy === "extract" ? "Unusual receipt, reading it with AI…" : "Reading receipt… (can take a few seconds)"}
           </span>
         )}
         <input type="file" accept="image/*" className="sr-only" onChange={(e) => handleFile(e.target.files?.[0])} />
